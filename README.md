@@ -1,9 +1,9 @@
 # Private NPM Buildkite Plugin
 
-A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to allow pipeline steps to easily install packages
-private packages form an [npm](https://www.npmjs.com) repository
+A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to allow pipeline steps to easily install
+private packages from an [npm](https://www.npmjs.com) repository.
 
-Note this plugin should work equally well despite your personal preferences for either `yarn` or `npm`
+Note this plugin should work equally well despite your personal preferences for either `yarn` or `npm`.
 
 ## Example
 
@@ -32,7 +32,7 @@ steps:
 ### `token` (required)
 The value of the NPM token.  
 
-> *NOTE* It's bad security to put your tokens into source control, so ideally this should be injected through the environment
+> *NOTE* It's bad security to put your tokens into source control, so ideally this should be injected through the environment.
 
 ### `registry` (optional)
 The path to a private npm repository.  Please ensure you supply the trailing `/`!
