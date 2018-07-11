@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+echo '--- Setting up access for :no_entry_sign: :npm: :package:'
+
+REGISTRY=${BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY:-'//registry.npmjs.org/'}
+NPM_TOKEN=${BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN}
+
+cat > .npmrc << EOF
+${REGISTRY}:_authToken=${NPM_TOKEN}
+save-exact=true
+EOF

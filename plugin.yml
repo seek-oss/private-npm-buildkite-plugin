@@ -1,0 +1,14 @@
+name: Private NPM
+description: Sets up NPM/Yarn to access private repositories
+author: https://github.com/seek-jobs
+public: true
+requirements:
+  - bash
+configuration:
+  properties:
+    registry:
+      type: string
+    token:
+      type: string
+  required:
+    - token
