@@ -7,7 +7,7 @@ steps:
   - label: ":sparkles:"
     plugins:
       plugin-linter#v2.0.0:
-        id: docker
+        id: seek-oss/private-npm
 
   - label: ":no_entry_sign: :npm: :package: :hammer:"
     plugins:
