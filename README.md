@@ -14,7 +14,7 @@ steps:
   - command: yarn install
     plugins:
       seek-oss/private-npm:
-        token: abc123
+        token: ${NPM_TOKEN}
 ```
 
 You can also specify a custom npm registry if you are using your own mirror.
@@ -24,7 +24,7 @@ steps:
   - command: yarn install
     plugins:
       seek-oss/private-npm:
-        token: abc123
+        token: ${NPM_TOKEN}
         registry: //myprivatenpm.com/
 ```
 
@@ -32,7 +32,7 @@ steps:
 ### `token` (required)
 The value of the NPM token.  
 
-> *NOTE* It's bad security to put your tokens into source control, so ideally this should be injected through the environment
+> *NOTE* It's bad security practise to put your secrets into source control. A better idea is to use environment variables.
 
 ### `registry` (optional)
 The path to a private npm repository.  Please ensure you supply the trailing `/`!
