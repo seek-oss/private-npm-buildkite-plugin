@@ -1,9 +1,9 @@
 # Private NPM Buildkite Plugin [![Build status](https://badge.buildkite.com/705414e5df1533fbc18a2dda1305ec015282575a87edb1e0c1.svg)](https://buildkite.com/seek/private-npm-buildkite-plugin)
 
-A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to allow pipeline steps to easily install packages
-private packages form an [npm](https://www.npmjs.com) repository
+A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to allow pipeline steps to easily install
+private packages from an [npm](https://www.npmjs.com) repository.
 
-Note this plugin should work equally well despite your personal preferences for either `yarn` or `npm`
+Note this plugin should work equally well despite your personal preferences for either `yarn` or `npm`.
 
 ## Example
 
