@@ -13,7 +13,7 @@ The following pipeline will run `yarn install` (and presumably some private pack
 steps:
   - command: yarn install
     plugins:
-      seek-oss/private-npm#v1.0.0:
+      seek-oss/private-npm#v1.0.1:
         token: ${NPM_TOKEN}
 ```
 
@@ -23,7 +23,7 @@ You can also specify a custom npm registry if you are using your own mirror.
 steps:
   - command: yarn install
     plugins:
-      seek-oss/private-npm#v1.0.0:
+      seek-oss/private-npm#v1.0.1:
         token: ${NPM_TOKEN}
         registry: //myprivatenpm.com/
 ```
