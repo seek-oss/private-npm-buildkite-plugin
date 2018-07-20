@@ -7,6 +7,19 @@ echo '--- Setting up access for :no_entry_sign: :npm: :package:'
 REGISTRY=${BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY:-'//registry.npmjs.org/'}
 NPM_TOKEN=${BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN}
 
+if [[ $NPM_TOKEN =~ ^file: ]]
+then
+  file=$(echo "$NPM_TOKEN" | cut -f2 -d ':' )
+  NPM_TOKEN=$(cat "$file")
+
+  [[ -z $NPM_TOKEN ]] && exit 1
+elif [[ $NPM_TOKEN =~ ^env: ]]
+then
+  env_var_name=$(echo "$NPM_TOKEN" | cut -f2 -d ':' )
+  NPM_TOKEN="${!env_var_name}"
+  [[ -z $NPM_TOKEN ]] && exit 1
+fi
+
 cat > .npmrc << EOF
 ${REGISTRY}:_authToken=${NPM_TOKEN}
 save-exact=true
