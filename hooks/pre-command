@@ -2,12 +2,36 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+REGISTRY=${BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY:-'//registry.npmjs.org/'}
+TOKEN=${BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN:-''}
+FILE=${BUILDKITE_PLUGIN_PRIVATE_NPM_FILE:-''}
+ENV=${BUILDKITE_PLUGIN_PRIVATE_NPM_ENV:-''}
+
+if { [[ -n "${FILE}" ]] && [[ -n "${ENV}" ]]; } \
+  || { [[ -n "${FILE}" ]] && [[ -n "${TOKEN}" ]]; } \
+  || { [[ -n "${TOKEN}" ]] && [[ -n "${ENV}" ]]; }
+then
+  echo ':no_entry_sign: :npm: :package: Failed! Only one of file, env or token parameters may be set'
+  exit 1
+fi
+
+if [[ -n "${FILE}" ]]
+then
+  TOKEN=$(cat "${FILE}")
+elif [[ -n "${ENV}" ]]
+then
+  TOKEN="${!ENV}"
+fi
+
+if [[ -z $TOKEN ]] 
+then
+  echo ':no_entry_sign: :npm: :package: Failed! A valid NPM_TOKEN could not be determined'
+  exit 1
+fi
+
 echo '--- Setting up access for :no_entry_sign: :npm: :package:'
 
-REGISTRY=${BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY:-'//registry.npmjs.org/'}
-NPM_TOKEN=${BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN}
-
 cat > .npmrc << EOF
-${REGISTRY}:_authToken=${NPM_TOKEN}
+${REGISTRY}:_authToken=${TOKEN}
 save-exact=true
 EOF
