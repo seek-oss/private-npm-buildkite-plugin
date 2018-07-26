@@ -7,28 +7,28 @@ Note this plugin should work equally well despite any personal preferences for e
 
 ## Example
 
-To read the value from an environment variable named `MY_TOKEN` when the plugin executes, use the `env:` prefix.
+To read the value from an environment variable named `MY_TOKEN` when the plugin executes, use the `env` fiels.
 
 ```yml
 steps:
   - command: yarn install
     plugins:
       seek-oss/private-npm#v1.1.1:
-        token: "env:MY_TOKEN"
+        env: "MY_TOKEN"
 ```
 
-To read the value from a file named `my_token_file`, use the `file:` prefix.
+To read the value from a file named `my_token_file`, use the `file` field.
 
 ```yml
 steps:
   - command: yarn install
     plugins:
       seek-oss/private-npm#v1.1.1:
-        token: "file:my_token_file"
+        file: "my_token_file"
 ```
 
 Alternatively you can read the token directly from any value exposed toxs your `pipeline.yml` file.  However, this 
-approach is discoraged in favour of using with the `env:` or `file:` prefix.  This functionality remains in the interest
+approach is discoraged in favour of using with the `env` or `file` fields.  This functionality remains in the interest
  of backwards compatibility.
 
 ```yml
@@ -47,24 +47,31 @@ steps:
   - command: yarn install
     plugins:
       seek-oss/private-npm#v1.1.1:
-        token: ${MY_TOKEN}
+        env: "MY_TOKEN"
         registry: //myprivatenpm.com/
 ```
 
 ## Configuration
 
-### `token` (required)
-The value of the NPM token.  Using the prefix `env:` of `file:` changes the behaviour of how the token is read.  By 
-omitting the prefix, the value will be read from a variable which is available to the Buildkite YAML parsing context.  
+> **NOTE** Even thought `env`, `file` and `token` are described as optional, _at least one must be set_ or the plugin 
+> will fail.
+
+### `env` (optional)
+
+The value of the NPM token will be read from the agent environment when the plugin executes.  This is useful in working
+around cases where eager binding of variables in `pipeline.yml` means some variables are not present in the 
+environment when the configuration file is parsed.
+
+### `file` (optional)
+
+The value of the NPM token will be read from a file on the agent when the plugin executes.  This is useful when working
+with secret that are created as files on the filesystem when a build is initiated.
+
+### `token` (optional)
+
+The value of the NPM token will be read from a variable which is available to the Buildkite YAML parsing context.  
 This value is interpolated when the YAML configuration is parsed by the Buildgent agent and provided to the plugin "as 
 is".
-
-Using the `env:` prefix delays reading the value from the agent environment until the plugin executes.
-
-Using the `file:` prefix will attempt to read the value from a file.
-
-The prefix variants are recommended if you are using a secrets manager or some other kind of late variable binding 
-mechanism to configure your agent's environment.  Please see the examples for useage.
 
 Example: `${MY_TOKEN}`
 > **NOTE:** Don't put your tokens into source control.  Don't use web interfaces you don't control to inject them into 
