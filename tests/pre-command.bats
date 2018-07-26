@@ -3,6 +3,13 @@
 load "$BATS_PATH/load.bash"
 teardown() {
   rm -f .npmrc
+  unset BUILDKITE_PLUGIN_PRIVATE_NPM_ENV
+  unset BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN
+  unset BUILDKITE_PLUGIN_PRIVATE_NPM_FILE
+  unset BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY
+  unset MY_ENV_VAR
+  rm -fr my_token_file
+  rm -fr my_empty_file
 }
 
 
@@ -25,9 +32,6 @@ teardown() {
   assert_success
   assert [ -e '.npmrc' ]
   assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123' 
-
-  # clean up 
-  rm -fr my_token_file
 }
 
 @test "fails if the file parameter is used but no file exists" {
@@ -46,9 +50,6 @@ teardown() {
   run $PWD/hooks/pre-command
 
   assert_failure
-
-  # clean up 
-  rm -fr my_empty_file
 }
 
 @test "reads the token from the environment if the env parameter is used" {
@@ -59,7 +60,7 @@ teardown() {
 
   assert_success
   assert [ -e '.npmrc' ]
-  assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123' 
+  assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123'
 }
 
 @test "fails if the env parameter is used but no such variable is defined" {
@@ -78,11 +79,34 @@ teardown() {
   run $PWD/hooks/pre-command
 
   assert_failure
-
 }
 
-@test "crates a npmrc file with supplied registry path and token" {
+@test "creates a npmrc file with supplied registry path and token" {
   export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='abc123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY='//myprivateregistry.org/'
+
+  run $PWD/hooks/pre-command
+
+  assert_success
+  assert [ -e '.npmrc' ]
+  assert_equal "$(head -n1 .npmrc)" '//myprivateregistry.org/:_authToken=abc123'
+}
+
+@test "creates a npmrc file with supplied registry path and env" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
+  export MY_ENV_VAR='abc123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY='//myprivateregistry.org/'
+
+  run $PWD/hooks/pre-command
+
+  assert_success
+  assert [ -e '.npmrc' ]
+  assert_equal "$(head -n1 .npmrc)" '//myprivateregistry.org/:_authToken=abc123'
+}
+
+@test "creates a npmrc file with supplied registry path and file" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
+  echo 'abc123' > my_token_file
   export BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY='//myprivateregistry.org/'
 
   run $PWD/hooks/pre-command
@@ -99,3 +123,49 @@ teardown() {
   refute [ -e '.npmrc' ]
 }
 
+# There is an exclusive relationship between file, env, and token.  These tests ensure only value is set and fail with 
+# a meaninful message otherwise
+@test "fails if env and file are both set" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
+
+  run $PWD/hooks/pre-command
+
+  assert_failure
+  assert_output ':no_entry_sign: :npm: :package: Failed! Only one of file, env or token parameters may be set'
+  refute [ -e '.npmrc' ]
+}
+
+@test "fails if token and file are both set" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='abc123'
+
+  run $PWD/hooks/pre-command
+
+  assert_failure
+  assert_output ':no_entry_sign: :npm: :package: Failed! Only one of file, env or token parameters may be set'
+  refute [ -e '.npmrc' ]
+}
+
+@test "fails if env and token are both set" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='abc123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
+
+  run $PWD/hooks/pre-command
+
+  assert_failure
+  assert_output ':no_entry_sign: :npm: :package: Failed! Only one of file, env or token parameters may be set'
+  refute [ -e '.npmrc' ]
+}
+
+@test "fails if env, file and token are all set" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='abc123'
+
+  run $PWD/hooks/pre-command
+
+  assert_failure
+  assert_output ':no_entry_sign: :npm: :package: Failed! Only one of file, env or token parameters may be set'
+  refute [ -e '.npmrc' ]
+}
