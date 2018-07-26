@@ -10,5 +10,8 @@ configuration:
       type: string
     token:
       type: string
-  required:
-    - token
+    env:
+      type: string
+    file:
+      type: string
+

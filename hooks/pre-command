@@ -5,22 +5,21 @@ IFS=$'\n\t'
 echo '--- Setting up access for :no_entry_sign: :npm: :package:'
 
 REGISTRY=${BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY:-'//registry.npmjs.org/'}
-NPM_TOKEN=${BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN}
+TOKEN=${BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN:=''}
+FILE=${BUILDKITE_PLUGIN_PRIVATE_NPM_FILE:=''}
+ENV=${BUILDKITE_PLUGIN_PRIVATE_NPM_ENV:=''}
 
-if [[ $NPM_TOKEN =~ ^file: ]]
+if [[ -n "${FILE}" ]]
 then
-  file=$(echo "$NPM_TOKEN" | cut -f2 -d ':' )
-  NPM_TOKEN=$(cat "$file")
-
-  [[ -z $NPM_TOKEN ]] && exit 1
-elif [[ $NPM_TOKEN =~ ^env: ]]
+  TOKEN=$(cat "${FILE}")
+elif [[ -n "${ENV}" ]]
 then
-  env_var_name=$(echo "$NPM_TOKEN" | cut -f2 -d ':' )
-  NPM_TOKEN="${!env_var_name}"
-  [[ -z $NPM_TOKEN ]] && exit 1
+  TOKEN="${!ENV}"
 fi
 
+[[ -z $TOKEN ]] && exit 1
+
 cat > .npmrc << EOF
-${REGISTRY}:_authToken=${NPM_TOKEN}
+${REGISTRY}:_authToken=${TOKEN}
 save-exact=true
 EOF

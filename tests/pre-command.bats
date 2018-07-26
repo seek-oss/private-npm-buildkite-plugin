@@ -16,8 +16,8 @@ teardown() {
   assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123'
 }
 
-@test "reads the token from a file if the file: prefix is used" {
-  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='file:my_token_file'
+@test "reads the token from a file if the file parameter is used" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
   echo 'abc123' > my_token_file
 
   run $PWD/hooks/pre-command
@@ -30,16 +30,16 @@ teardown() {
   rm -fr my_token_file
 }
 
-@test "fails if the file: prefix is used but no file exists" {
-  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='file:my_missing_file'
+@test "fails if the file parameter is used but no file exists" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_missing_file'
 
   run $PWD/hooks/pre-command
 
   assert_failure
 }
 
-@test "fails if the file: prefix is used but file is empty" {
-  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='file:my_empty_file'
+@test "fails if the file parameter is used and the file exists but is empty" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_empty_file'
 
   touch my_empty_file
 
@@ -51,8 +51,8 @@ teardown() {
   rm -fr my_empty_file
 }
 
-@test "reads the token from the environment if the env: prefix is used" {
-  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='env:MY_ENV_VAR'
+@test "reads the token from the environment if the env parameter is used" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
   export MY_ENV_VAR='abc123'
 
   run $PWD/hooks/pre-command
@@ -62,16 +62,16 @@ teardown() {
   assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123' 
 }
 
-@test "fails if the env: prefix is used but no such variable is defined" {
-  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='env:MY_MISSING_VAR'
+@test "fails if the env parameter is used but no such variable is defined" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_MISSING_VAR'
 
   run $PWD/hooks/pre-command
 
   assert_failure
 }
 
-@test "fails if the env: prefix is used but the value of the variable is empty" {
-  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='env:MY_EMPTY_VAR'
+@test "fails if the env parameter is used but the value of the variable is empty" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_EMPTY_VAR'
 
   export MY_EMPTY_VAR=""
 
@@ -92,7 +92,7 @@ teardown() {
   assert_equal "$(head -n1 .npmrc)" '//myprivateregistry.org/:_authToken=abc123'
 }
 
-@test "the command fails if the token is not set" {
+@test "the command fails if none of the fields are not set" {
   run $PWD/hooks/pre-command
 
   assert_failure
