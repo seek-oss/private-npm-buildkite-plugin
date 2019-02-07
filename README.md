@@ -13,8 +13,8 @@ To read the value from an environment variable named `MY_TOKEN` when the plugin 
 steps:
   - command: yarn install
     plugins:
-      seek-oss/private-npm#v1.1.1:
-        env: "MY_TOKEN"
+      - seek-oss/private-npm#v1.1.1:
+          env: "MY_TOKEN"
 ```
 
 To read the value from a file named `my_token_file`, use the `file` field.
@@ -23,8 +23,8 @@ To read the value from a file named `my_token_file`, use the `file` field.
 steps:
   - command: yarn install
     plugins:
-      seek-oss/private-npm#v1.1.1:
-        file: "my_token_file"
+      - seek-oss/private-npm#v1.1.1:
+          file: "my_token_file"
 ```
 
 Alternatively you can read the token directly from any value exposed toxs your `pipeline.yml` file.  However, this 
@@ -35,8 +35,8 @@ approach is discoraged in favour of using with the `env` or `file` fields.  This
 steps:
   - command: yarn install
     plugins:
-      seek-oss/private-npm#v1.1.1:
-        token: ${MY_TOKEN}
+      - seek-oss/private-npm#v1.1.1:
+          token: ${MY_TOKEN}
 ```
 
 
@@ -46,9 +46,9 @@ You can also specify a custom npm registry if you are using your own mirror.
 steps:
   - command: yarn install
     plugins:
-      seek-oss/private-npm#v1.1.1:
-        env: "MY_TOKEN"
-        registry: //myprivatenpm.com/
+      - seek-oss/private-npm#v1.1.1:
+          env: "MY_TOKEN"
+          registry: //myprivatenpm.com/
 ```
 
 ## Configuration
