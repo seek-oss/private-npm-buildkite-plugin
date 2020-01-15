@@ -1,4 +1,8 @@
-# Private NPM Buildkite Plugin [![Build status](https://badge.buildkite.com/705414e5df1533fbc18a2dda1305ec015282575a87edb1e0c1.svg)](https://buildkite.com/seek/private-npm-buildkite-plugin)
+# Private NPM Buildkite Plugin
+
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fseek-oss%2Fprivate-npm-buildkite-plugin%2Fbadge&style=flat)](https://actions-badge.atrox.dev/seek-oss/private-npm-buildkite-plugin/goto)
+[![GitHub Release](https://img.shields.io/github/release/seek-oss/private-npm-buildkite-plugin.svg)](https://github.com/seek-oss/private-npm-buildkite-plugin/releases)
+
 
 A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to allow pipeline steps to easily install
 private packages from an [npm](https://www.npmjs.com) repository.
@@ -13,7 +17,7 @@ To read the value from an environment variable named `MY_TOKEN` when the plugin 
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.1.1:
+      - seek-oss/private-npm#v1.1.2:
           env: "MY_TOKEN"
 ```
 
@@ -23,7 +27,7 @@ To read the value from a file named `my_token_file`, use the `file` field.
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.1.1:
+      - seek-oss/private-npm#v1.1.2:
           file: "my_token_file"
 ```
 
@@ -35,7 +39,7 @@ approach is discoraged in favour of using with the `env` or `file` fields.  This
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.1.1:
+      - seek-oss/private-npm#v1.1.2:
           token: ${MY_TOKEN}
 ```
 
@@ -46,7 +50,7 @@ You can also specify a custom npm registry if you are using your own mirror.
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.1.1:
+      - seek-oss/private-npm#v1.1.2:
           env: "MY_TOKEN"
           registry: //myprivatenpm.com/
 ```
@@ -61,6 +65,9 @@ steps:
 The value of the NPM token will be read from the agent environment when the plugin executes.  This is useful in working
 around cases where eager binding of variables in `pipeline.yml` means some variables are not present in the 
 environment when the configuration file is parsed.
+
+> **NOTE** : Beware of using `NPM_TOKEN` as the name for the environment variable. When using that name the variable
+> is unstable and has a tedency to return an empty string in the context of this plugin.
 
 ### `file` (optional)
 

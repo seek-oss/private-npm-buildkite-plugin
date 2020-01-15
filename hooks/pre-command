@@ -2,28 +2,28 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-REGISTRY=${BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY:-'//registry.npmjs.org/'}
-TOKEN=${BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN:-''}
-FILE=${BUILDKITE_PLUGIN_PRIVATE_NPM_FILE:-''}
-ENV=${BUILDKITE_PLUGIN_PRIVATE_NPM_ENV:-''}
+SEEK_OSS_PRIVATE_NPM_REGISTRY=${BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY:-'//registry.npmjs.org/'}
+SEEK_OSS_PRIVATE_NPM_TOKEN=${BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN:-''}
+SEEK_OSS_PRIVATE_NPM_FILE=${BUILDKITE_PLUGIN_PRIVATE_NPM_FILE:-''}
+SEEK_OSS_PRIVATE_NPM_ENV=${BUILDKITE_PLUGIN_PRIVATE_NPM_ENV:-''}
 
-if { [[ -n "${FILE}" ]] && [[ -n "${ENV}" ]]; } \
-  || { [[ -n "${FILE}" ]] && [[ -n "${TOKEN}" ]]; } \
-  || { [[ -n "${TOKEN}" ]] && [[ -n "${ENV}" ]]; }
+if { [[ -n "${SEEK_OSS_PRIVATE_NPM_FILE}" ]] && [[ -n "${SEEK_OSS_PRIVATE_NPM_ENV}" ]]; } \
+  || { [[ -n "${SEEK_OSS_PRIVATE_NPM_FILE}" ]] && [[ -n "${SEEK_OSS_PRIVATE_NPM_TOKEN}" ]]; } \
+  || { [[ -n "${SEEK_OSS_PRIVATE_NPM_TOKEN}" ]] && [[ -n "${SEEK_OSS_PRIVATE_NPM_ENV}" ]]; }
 then
   echo ':no_entry_sign: :npm: :package: Failed! Only one of file, env or token parameters may be set'
   exit 1
 fi
 
-if [[ -n "${FILE}" ]]
+if [[ -n "${SEEK_OSS_PRIVATE_NPM_FILE}" ]]
 then
-  TOKEN=$(cat "${FILE}")
-elif [[ -n "${ENV}" ]]
+  SEEK_OSS_PRIVATE_NPM_TOKEN=$(cat "${SEEK_OSS_PRIVATE_NPM_FILE}")
+elif [[ -n "${SEEK_OSS_PRIVATE_NPM_ENV}" ]]
 then
-  TOKEN="${!ENV}"
+  SEEK_OSS_PRIVATE_NPM_TOKEN="${!SEEK_OSS_PRIVATE_NPM_ENV}"
 fi
 
-if [[ -z $TOKEN ]] 
+if [[ -z $SEEK_OSS_PRIVATE_NPM_TOKEN ]] 
 then
   echo ':no_entry_sign: :npm: :package: Failed! A valid NPM_TOKEN could not be determined'
   exit 1
@@ -32,6 +32,6 @@ fi
 echo '--- Setting up access for :no_entry_sign: :npm: :package:'
 
 cat > .npmrc << EOF
-${REGISTRY}:_authToken=${TOKEN}
+${SEEK_OSS_PRIVATE_NPM_REGISTRY}:_authToken=${SEEK_OSS_PRIVATE_NPM_TOKEN}
 save-exact=true
 EOF
