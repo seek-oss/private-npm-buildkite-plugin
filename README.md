@@ -1,5 +1,9 @@
 # Private NPM Buildkite Plugin
 
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fseek-oss%2Fprivate-npm-buildkite-plugin%2Fbadge&style=flat)](https://actions-badge.atrox.dev/seek-oss/private-npm-buildkite-plugin/goto)
+[![GitHub Release](https://img.shields.io/github/release/seek-oss/private-npm-buildkite-plugin.svg)](https://github.com/seek-oss/private-npm-buildkite-plugin/releases)
+
+
 A [Buildkite plugin](https://buildkite.com/docs/agent/v3/plugins) to allow pipeline steps to easily install
 private packages from an [npm](https://www.npmjs.com) repository.
 
