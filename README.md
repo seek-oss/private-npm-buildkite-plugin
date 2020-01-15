@@ -62,6 +62,9 @@ The value of the NPM token will be read from the agent environment when the plug
 around cases where eager binding of variables in `pipeline.yml` means some variables are not present in the 
 environment when the configuration file is parsed.
 
+> **NOTE** : Beware of using `NPM_TOKEN` as the name for the environment variable. When using that name the variable
+> is unstable and has a tedency to return an empty string in the context of this plugin.
+
 ### `file` (optional)
 
 The value of the NPM token will be read from a file on the agent when the plugin executes.  This is useful when working
