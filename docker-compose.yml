@@ -3,4 +3,9 @@ services:
   tests:
     image: buildkite/plugin-tester
     volumes:
-      - ".:/plugin"
+      - ".:/plugin:ro"
+  lint:
+    image: buildkite/plugin-linter
+    command: ['--name', 'seek-oss/private-npm']
+    volumes:
+      - ".:/plugin:ro"
