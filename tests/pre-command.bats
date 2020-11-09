@@ -3,6 +3,7 @@
 load "$BATS_PATH/load.bash"
 teardown() {
   rm -f .npmrc
+  rm -f ./tests/path/to/project/.npmrc
   unset BUILDKITE_PLUGIN_PRIVATE_NPM_ENV
   unset BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN
   unset BUILDKITE_PLUGIN_PRIVATE_NPM_FILE
@@ -114,6 +115,17 @@ teardown() {
   assert_success
   assert [ -e '.npmrc' ]
   assert_equal "$(head -n1 .npmrc)" '//myprivateregistry.org/:_authToken=abc123'
+}
+
+@test "creates a npmrc file with supplied output path and token" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='abc123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_OUTPUT_PATH='./tests/path/to/project/'
+
+  run $PWD/hooks/pre-command
+
+  assert_success
+  assert [ -e './tests/path/to/project/.npmrc' ]
+  assert_equal "$(head -n1 ./tests/path/to/project/.npmrc)" '//registry.npmjs.org/:_authToken=abc123'
 }
 
 @test "the command fails if none of the fields are not set" {

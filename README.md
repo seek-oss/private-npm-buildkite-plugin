@@ -94,5 +94,10 @@ The path to a private npm repository.  Please ensure you supply the trailing `/`
 
 Example: `//myprivatenpm.com/`
 
+### `output-path` (optional)
+The path to the .npmrc that will be created.  Please ensure you supply the trailing `/`!
+
+Example: `./project/path/`
+
 ## License
 MIT (see [LICENSE](./LICENSE))
