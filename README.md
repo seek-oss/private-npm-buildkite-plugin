@@ -17,7 +17,7 @@ To read the value from an environment variable named `MY_TOKEN` when the plugin 
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.1.2:
+      - seek-oss/private-npm#v1.2.0:
           env: "MY_TOKEN"
 ```
 
@@ -27,7 +27,7 @@ To read the value from a file named `my_token_file`, use the `file` field.
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.1.2:
+      - seek-oss/private-npm#v1.2.0:
           file: "my_token_file"
 ```
 
@@ -39,7 +39,7 @@ approach is discoraged in favour of using with the `env` or `file` fields.  This
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.1.2:
+      - seek-oss/private-npm#v1.2.0:
           token: ${MY_TOKEN}
 ```
 
@@ -50,7 +50,7 @@ You can also specify a custom npm registry if you are using your own mirror.
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.1.2:
+      - seek-oss/private-npm#v1.2.0:
           env: "MY_TOKEN"
           registry: //myprivatenpm.com/
 ```
@@ -93,6 +93,11 @@ Example: `${MY_TOKEN}`
 The path to a private npm repository.  Please ensure you supply the trailing `/`!
 
 Example: `//myprivatenpm.com/`
+
+### `output-path` (optional)
+The path to the .npmrc that will be created.  Please ensure you supply the trailing `/`!
+
+Example: `./project/path/`
 
 ## License
 MIT (see [LICENSE](./LICENSE))
