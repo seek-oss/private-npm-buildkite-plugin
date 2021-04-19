@@ -31,8 +31,8 @@ steps:
           file: "my_token_file"
 ```
 
-Alternatively you can read the token directly from any value exposed toxs your `pipeline.yml` file.  However, this 
-approach is discoraged in favour of using with the `env` or `file` fields.  This functionality remains in the interest
+Alternatively you can read the token directly from any value exposed to your `pipeline.yml` file.  However, this 
+approach is discouraged in favour of using with the `env` or `file` fields.  This functionality remains in the interest
  of backwards compatibility.
 
 ```yml
