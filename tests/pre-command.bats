@@ -136,7 +136,7 @@ teardown() {
 }
 
 # There is an exclusive relationship between file, env, and token.  These tests ensure only value is set and fail with 
-# a meaninful message otherwise
+# a meaningful message otherwise
 @test "fails if env and file are both set" {
   export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
   export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
