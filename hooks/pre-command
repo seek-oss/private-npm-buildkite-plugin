@@ -8,6 +8,40 @@ SEEK_OSS_PRIVATE_NPM_FILE=${BUILDKITE_PLUGIN_PRIVATE_NPM_FILE:-''}
 SEEK_OSS_PRIVATE_NPM_ENV=${BUILDKITE_PLUGIN_PRIVATE_NPM_ENV:-''}
 SEEK_OSS_PRIVATE_NPM_OUTPUT_PATH=${BUILDKITE_PLUGIN_PRIVATE_NPM_OUTPUT_PATH:-'./'}
 
+# Handle multi-registries scenario
+if [[ -n ${BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_ENV:-} && \
+      -n ${BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_PATH:-} ]]; then
+
+  # Validate that other fields are not provided
+  if [[ -n $SEEK_OSS_PRIVATE_NPM_TOKEN || \
+        -n $SEEK_OSS_PRIVATE_NPM_FILE || \
+        -n $SEEK_OSS_PRIVATE_NPM_ENV ]]; then
+    echo ':no_entry_sign: :npm: :package: Failed! When multi-registries are provided, the following fields cannot be set: env, file, token'
+    exit 1
+  fi
+
+  echo '--- Setting up access for :no_entry_sign: :npm: :package:'
+
+  OUTPUT_FILE="${SEEK_OSS_PRIVATE_NPM_OUTPUT_PATH}.npmrc"
+  mkdir -p "${OUTPUT_FILE%/*}" && touch $OUTPUT_FILE
+
+  reg_index=0
+  env_base_name=BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_${reg_index}_ENV
+  path_base_name=BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_${reg_index}_PATH
+
+  while [[ -n ${!env_base_name:-} && -n ${!path_base_name:-} ]]
+  do
+    temp_env=${!env_base_name}
+    echo "${!path_base_name}:_authToken=${!temp_env}" >> $OUTPUT_FILE
+    ((++reg_index))
+    env_base_name=BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_${reg_index}_ENV
+    path_base_name=BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_${reg_index}_PATH
+  done
+
+  echo "save-exact=true" >> $OUTPUT_FILE
+  exit 0
+fi
+
 if { [[ -n "${SEEK_OSS_PRIVATE_NPM_FILE}" ]] && [[ -n "${SEEK_OSS_PRIVATE_NPM_ENV}" ]]; } \
   || { [[ -n "${SEEK_OSS_PRIVATE_NPM_FILE}" ]] && [[ -n "${SEEK_OSS_PRIVATE_NPM_TOKEN}" ]]; } \
   || { [[ -n "${SEEK_OSS_PRIVATE_NPM_TOKEN}" ]] && [[ -n "${SEEK_OSS_PRIVATE_NPM_ENV}" ]]; }

@@ -9,6 +9,15 @@ teardown() {
   unset BUILDKITE_PLUGIN_PRIVATE_NPM_FILE
   unset BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY
   unset MY_ENV_VAR
+  unset MY_ENV_VAR1
+  unset MY_ENV_VAR2
+  unset MY_ENV_VAR3
+  unset BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_ENV
+  unset BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_PATH
+  unset BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_1_ENV
+  unset BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_1_PATH
+  unset BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_2_ENV
+  unset BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_2_PATH
   rm -fr my_token_file
   rm -fr my_empty_file
 }
@@ -128,6 +137,31 @@ teardown() {
   assert_equal "$(head -n1 ./tests/path/to/project/.npmrc)" '//registry.npmjs.org/:_authToken=abc123'
 }
 
+@test  "creates a npmrc file when multi-registries are supplied' {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_OUTPUT_PATH='./tests/path/to/project/'
+
+  export MY_ENV_VAR1='abc123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_ENV='MY_ENV_VAR1'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_PATH='//myprivateregistry1.org/'
+
+  export MY_ENV_VAR2='def123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_1_ENV='MY_ENV_VAR2'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_1_PATH='//myprivateregistry2.org/'
+
+  export MY_ENV_VAR3='ghi123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_2_ENV='MY_ENV_VAR3'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_2_PATH='//myprivateregistry3.org/'
+
+  run $PWD/hooks/pre-command
+  
+  assert_success
+  assert [ -e './tests/path/to/project/.npmrc' ]
+  assert_equal "$(head -n 1 ./tests/path/to/project/.npmrc)" '//myprivateregistry1.org/:_authToken=abc123'
+  assert_equal "$(head -n 2 ./tests/path/to/project/.npmrc | tail -n 1)" '//myprivateregistry2.org/:_authToken=def123'
+  assert_equal "$(head -n 3 ./tests/path/to/project/.npmrc | tail -n 1)" '//myprivateregistry3.org/:_authToken=ghi123'
+  assert_equal "$(head -n 4 ./tests/path/to/project/.npmrc | tail -n 1)" 'save-exact=true'
+}
+
 @test "the command fails if none of the fields are not set" {
   run $PWD/hooks/pre-command
 
@@ -135,8 +169,8 @@ teardown() {
   refute [ -e '.npmrc' ]
 }
 
-# There is an exclusive relationship between file, env, and token.  These tests ensure only value is set and fail with 
-# a meaninful message otherwise
+# There is an exclusive relationship between file, env, token, and multi-registries. These tests ensure only value is set and fail with 
+# a meaningful message otherwise
 @test "fails if env and file are both set" {
   export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
   export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
@@ -179,5 +213,41 @@ teardown() {
 
   assert_failure
   assert_output ':no_entry_sign: :npm: :package: Failed! Only one of file, env or token parameters may be set'
+  refute [ -e '.npmrc' ]
+}
+
+@test "fails if both multi-registries and env are set" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_ENV='MY_ENV_VAR'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_PATH='/myprivateregistry.org//'
+
+  run $PWD/hooks/pre-command
+
+  assert_failure
+  assert_output ':no_entry_sign: :npm: :package: Failed! When multi-registries are provided, the following fields cannot be set: env, file, token'
+  refute [ -e '.npmrc' ]
+}
+
+@test "fails if both multi-registries and file are set" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_ENV='MY_ENV_VAR'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_PATH='/myprivateregistry.org//'
+
+  run $PWD/hooks/pre-command
+
+  assert_failure
+  assert_output ':no_entry_sign: :npm: :package: Failed! When multi-registries are provided, the following fields cannot be set: env, file, token'
+  refute [ -e '.npmrc' ]
+}
+
+@test "fails if both multi-registries and token are set" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='abc123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_ENV='MY_ENV_VAR'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_MULTI_REGISTRIES_0_PATH='/myprivateregistry.org//'
+
+  run $PWD/hooks/pre-command
+
+  assert_failure
+  assert_output ':no_entry_sign: :npm: :package: Failed! When multi-registries are provided, the following fields cannot be set: env, file, token'
   refute [ -e '.npmrc' ]
 }

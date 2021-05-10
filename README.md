@@ -55,9 +55,25 @@ steps:
           registry: //myprivatenpm.com/
 ```
 
+If you have _multiple_ private repositories, you can specify them with the following:
+
+```yml
+steps:
+  - command: yarn install
+    plugins:
+      - seek-oss/private-npm#v1.2.0:
+          multi-registries:
+            - env: "MY_TOKEN_1"
+              path: //myprivatenpm.com/
+            - env: "MY_TOKEN_2"
+              path: //myotherprivatenpm.com/
+```
+
+Take note that in `multi-registries` mode, only `env` field can be used and the `path` field is required. The fields `token` and `file` will not work.
+
 ## Configuration
 
-> **NOTE** Even thought `env`, `file` and `token` are described as optional, _at least one must be set_ or the plugin 
+> **NOTE** Even though `env`, `file` and `token` are described as optional, _at least one must be set_ or the plugin 
 > will fail.
 
 ### `env` (optional)
@@ -98,6 +114,9 @@ Example: `//myprivatenpm.com/`
 The path to the .npmrc that will be created.  Please ensure you supply the trailing `/`!
 
 Example: `./project/path/`
+
+### `multi-registries` (optional)
+An array of objects, each containing `env` and `path` to support multiple private registries.
 
 ## License
 MIT (see [LICENSE](./LICENSE))

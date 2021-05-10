@@ -5,7 +5,19 @@ public: true
 requirements:
   - bash
 configuration:
+  definitions:
+    multi-registry-object:
+      type: object
+      properties:
+        env:
+          type: string
+        path:
+          type: string
   properties:
+    multi-registries:
+      type: array
+      items:
+        $ref: '#/definitions/multi-registry-object'
     registry:
       type: string
     token:
