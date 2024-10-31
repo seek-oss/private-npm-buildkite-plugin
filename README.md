@@ -53,7 +53,7 @@ steps:
           registry: //myprivatenpm.com/
 ```
 
-If you set a registry, you can configure a specific scopes to fetch packages from your custom registries
+If you set a registry, you can configure a specific scope to fetch packages from your custom registry
 
 ```yml
 steps:
