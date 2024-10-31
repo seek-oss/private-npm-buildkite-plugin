@@ -6,6 +6,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Lint
-        run: docker compose run --rm lint --quiet
+        run: docker compose run --quiet-pull lint
       - name: Tests
-        run: docker compose run --rm tests --quiet
+        run: docker compose run --quiet-pull tests
