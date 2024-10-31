@@ -8,6 +8,8 @@ configuration:
   properties:
     registry:
       type: string
+    scope:
+      type: string
     token:
       type: string
     env:
@@ -16,4 +18,3 @@ configuration:
       type: string
     output-path:
       type: string
-

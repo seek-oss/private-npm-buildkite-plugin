@@ -55,6 +55,18 @@ steps:
           registry: //myprivatenpm.com/
 ```
 
+If you set a registry, you can configure a specific scopes to fetch packages from your custom registries
+
+```yml
+steps:
+  - command: yarn install
+    plugins:
+      - seek-oss/private-npm#v1.2.0:
+          env: "MY_TOKEN"
+          registry: //myprivatenpm.com/
+          scope: @myprivatescope
+```
+
 ## Configuration
 
 > **NOTE** Even thought `env`, `file` and `token` are described as optional, _at least one must be set_ or the plugin 
