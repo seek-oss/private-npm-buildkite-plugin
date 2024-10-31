@@ -1,6 +1,12 @@
 #!/usr/bin/env bats
 
-load "$BATS_PATH/load.bash"
+setup() {
+  load "$BATS_PLUGIN_PATH/load.bash"
+
+  # Uncomment to enable stub debugging
+  # export GIT_STUB_DEBUG=/dev/tty
+}
+
 teardown() {
   rm -f .npmrc
   rm -f ./tests/path/to/project/.npmrc
@@ -32,7 +38,7 @@ teardown() {
 
   assert_success
   assert [ -e '.npmrc' ]
-  assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123' 
+  assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123'
 }
 
 @test "fails if the file parameter is used but no file exists" {
@@ -135,7 +141,7 @@ teardown() {
   refute [ -e '.npmrc' ]
 }
 
-# There is an exclusive relationship between file, env, and token.  These tests ensure only value is set and fail with 
+# There is an exclusive relationship between file, env, and token.  These tests ensure only value is set and fail with
 # a meaninful message otherwise
 @test "fails if env and file are both set" {
   export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
