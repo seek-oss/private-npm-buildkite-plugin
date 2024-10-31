@@ -30,6 +30,7 @@ teardown() {
   assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123'
 }
 
+
 @test "reads the token from a file if the file parameter is used" {
   export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
   echo 'abc123' > my_token_file
@@ -121,6 +122,33 @@ teardown() {
   assert_success
   assert [ -e '.npmrc' ]
   assert_equal "$(head -n1 .npmrc)" '//myprivateregistry.org/:_authToken=abc123'
+}
+
+@test "creates a npmrc file with supplied scoped registry path and env" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
+  export MY_ENV_VAR='abc123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY='//myprivateregistry.org/'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_SCOPE='@myprivatescope'
+
+  run $PWD/hooks/pre-command
+
+  assert_success
+  assert [ -e '.npmrc' ]
+  assert_equal "$(head -n1 .npmrc)" '//myprivateregistry.org/:_authToken=abc123'
+  assert_equal "$(tail -n1 .npmrc)" '@myprivatescope:registry=//myprivateregistry.org/'
+}
+
+@test "creates a npmrc file with supplied scoped and default registry path and env" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
+  export MY_ENV_VAR='abc123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_SCOPE='@myprivatescope'
+
+  run $PWD/hooks/pre-command
+
+  assert_success
+  assert [ -e '.npmrc' ]
+  assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123'
+  assert_equal "$(tail -n1 .npmrc)" '@myprivatescope:registry=//registry.npmjs.org/'
 }
 
 @test "creates a npmrc file with supplied output path and token" {
