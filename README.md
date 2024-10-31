@@ -62,7 +62,7 @@ steps:
       - seek-oss/private-npm#v1.2.0:
           env: "MY_TOKEN"
           registry: //myprivatenpm.com/
-          scope: @myprivatescope
+          scope: "@myprivatescope"
 ```
 
 ## Configuration
