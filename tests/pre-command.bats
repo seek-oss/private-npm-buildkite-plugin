@@ -135,7 +135,7 @@ teardown() {
   assert_success
   assert [ -e '.npmrc' ]
   assert_equal "$(head -n1 .npmrc)" '//myprivateregistry.org/:_authToken=abc123'
-  assert_equal "$(tail -n1 .npmrc)" '@myprivatescope:registry=//myprivateregistry.org/'
+  assert_equal "$(tail -n1 .npmrc)" '@myprivatescope:registry=https://myprivateregistry.org/'
 }
 
 @test "creates a npmrc file with supplied scoped and default registry path and env" {
@@ -148,7 +148,7 @@ teardown() {
   assert_success
   assert [ -e '.npmrc' ]
   assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123'
-  assert_equal "$(tail -n1 .npmrc)" '@myprivatescope:registry=//registry.npmjs.org/'
+  assert_equal "$(tail -n1 .npmrc)" '@myprivatescope:registry=https://registry.npmjs.org/'
 }
 
 @test "creates a npmrc file with supplied output path and token" {
