@@ -53,7 +53,9 @@ steps:
           registry: //myprivatenpm.com/
 ```
 
-If you set a registry, you can configure a specific scope to fetch packages from your custom registry
+If you set a registry, you can configure a specific scope to fetch packages from your custom registry.
+In this case, use only Protocol-Relative URL for `registry` as `https://` will be prepended in the
+scope in the `.npmrc` for you.
 
 ```yml
 steps:
