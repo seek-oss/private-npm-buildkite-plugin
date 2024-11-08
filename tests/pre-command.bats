@@ -1,6 +1,12 @@
 #!/usr/bin/env bats
 
-load "$BATS_PATH/load.bash"
+setup() {
+  load "$BATS_PLUGIN_PATH/load.bash"
+
+  # Uncomment to enable stub debugging
+  # export GIT_STUB_DEBUG=/dev/tty
+}
+
 teardown() {
   rm -f .npmrc
   rm -f ./tests/path/to/project/.npmrc
@@ -24,6 +30,7 @@ teardown() {
   assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123'
 }
 
+
 @test "reads the token from a file if the file parameter is used" {
   export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'
   echo 'abc123' > my_token_file
@@ -32,7 +39,7 @@ teardown() {
 
   assert_success
   assert [ -e '.npmrc' ]
-  assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123' 
+  assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123'
 }
 
 @test "fails if the file parameter is used but no file exists" {
@@ -117,6 +124,33 @@ teardown() {
   assert_equal "$(head -n1 .npmrc)" '//myprivateregistry.org/:_authToken=abc123'
 }
 
+@test "creates a npmrc file with supplied scoped registry path and env" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
+  export MY_ENV_VAR='abc123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_REGISTRY='//myprivateregistry.org/'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_SCOPE='@myprivatescope'
+
+  run $PWD/hooks/pre-command
+
+  assert_success
+  assert [ -e '.npmrc' ]
+  assert_equal "$(head -n1 .npmrc)" '//myprivateregistry.org/:_authToken=abc123'
+  assert_equal "$(tail -n1 .npmrc)" '@myprivatescope:registry=https://myprivateregistry.org/'
+}
+
+@test "creates a npmrc file with supplied scoped and default registry path and env" {
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_ENV='MY_ENV_VAR'
+  export MY_ENV_VAR='abc123'
+  export BUILDKITE_PLUGIN_PRIVATE_NPM_SCOPE='@myprivatescope'
+
+  run $PWD/hooks/pre-command
+
+  assert_success
+  assert [ -e '.npmrc' ]
+  assert_equal "$(head -n1 .npmrc)" '//registry.npmjs.org/:_authToken=abc123'
+  assert_equal "$(tail -n1 .npmrc)" '@myprivatescope:registry=https://registry.npmjs.org/'
+}
+
 @test "creates a npmrc file with supplied output path and token" {
   export BUILDKITE_PLUGIN_PRIVATE_NPM_TOKEN='abc123'
   export BUILDKITE_PLUGIN_PRIVATE_NPM_OUTPUT_PATH='./tests/path/to/project/'
@@ -135,7 +169,7 @@ teardown() {
   refute [ -e '.npmrc' ]
 }
 
-# There is an exclusive relationship between file, env, and token.  These tests ensure only value is set and fail with 
+# There is an exclusive relationship between file, env, and token.  These tests ensure only value is set and fail with
 # a meaninful message otherwise
 @test "fails if env and file are both set" {
   export BUILDKITE_PLUGIN_PRIVATE_NPM_FILE='my_token_file'

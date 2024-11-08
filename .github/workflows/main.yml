@@ -4,8 +4,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Lint
-        run: docker-compose run lint
+        run: docker compose run --quiet-pull lint
       - name: Tests
-        run: docker-compose run tests
+        run: docker compose run --quiet-pull tests
