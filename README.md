@@ -16,7 +16,7 @@ To read the value from an environment variable named `MY_TOKEN` when the plugin 
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.2.0:
+      - seek-oss/private-npm#v1.3.0:
           env: "MY_TOKEN"
 ```
 
@@ -26,7 +26,7 @@ To read the value from a file named `my_token_file`, use the `file` field.
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.2.0:
+      - seek-oss/private-npm#v1.3.0:
           file: "my_token_file"
 ```
 
@@ -38,7 +38,7 @@ of backwards compatibility.
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.2.0:
+      - seek-oss/private-npm#v1.3.0:
           token: ${MY_TOKEN}
 ```
 
@@ -48,7 +48,7 @@ You can also specify a custom npm registry if you are using your own mirror.
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.2.0:
+      - seek-oss/private-npm#v1.3.0:
           env: "MY_TOKEN"
           registry: //myprivatenpm.com/
 ```
@@ -61,7 +61,7 @@ scope in the `.npmrc` for you.
 steps:
   - command: yarn install
     plugins:
-      - seek-oss/private-npm#v1.2.0:
+      - seek-oss/private-npm#v1.3.0:
           env: "MY_TOKEN"
           registry: //myprivatenpm.com/
           scope: "@myprivatescope"
